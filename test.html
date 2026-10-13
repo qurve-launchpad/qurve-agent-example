@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blaunch Portfolio Agent · Test Interface</title>
+  <style>
+    /* ——— Modern, clean, slightly DeFi-ish ——— */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0b0f14;
+      color: #e8edf2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      max-height: 800px;
+      background: #12181f;
+      border: 1px solid #1e2a36;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+      overflow: hidden;
+    }
+
+    /* ——— Header ——— */
+    .header {
+      padding: 18px 22px;
+      border-bottom: 1px solid #1e2a36;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f151c;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #f0f6ff;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      padding: 4px 10px;
+      border-radius: 40px;
+      background: #1a2a1e;
+      color: #7ee787;
+      border: 1px solid #2a4a2e;
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7ee787;
+      box-shadow: 0 0 8px #7ee787;
+    }
+
+    .status-text {
+      font-size: 0.75rem;
+      color: #7a8b9b;
+    }
+
+    /* ——— Chat area ——— */
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #0b0f14;
+      scroll-behavior: smooth;
+    }
+
+    .chat::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chat::-webkit-scrollbar-thumb {
+      background: #1e2a36;
+      border-radius: 10px;
+    }
+
+    .msg {
+      display: flex;
+      gap: 10px;
+      max-width: 88%;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .msg.user .avatar {
+      background: #1e3a5f;
+      color: #a0c4ff;
+    }
+
+    .msg.agent .avatar {
+      background: #1e2a1e;
+      color: #7ee787;
+    }
+
+    .bubble {
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .msg.user .bubble {
+      background: #1a2d44;
+      border: 1px solid #2a4058;
+      color: #d8e8ff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.agent .bubble {
+      background: #141b22;
+      border: 1px solid #1e2a36;
+      color: #d0dae4;
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg.agent .bubble.error {
+      border-color: #4a1e1e;
+      background: #1e1414;
+      color: #f48787;
+    }
+
+    .meta {
+      font-size: 0.65rem;
+      color: #5a6b7b;
+      margin-top: 6px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .meta code {
+      background: #1a222b;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      color: #8ab4f8;
+      border: 1px solid #1e2a36;
+    }
+
+    /* ——— Input area ——— */
+    .input-area {
+      padding: 14px 18px 16px;
+      border-top: 1px solid #1e2a36;
+      background: #0f151c;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    textarea {
+      flex: 1;
+      background: #0b0f14;
+      border: 1px solid #1e2a36;
+      border-radius: 14px;
+      color: #e8edf2;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-height: 52px;
+      max-height: 120px;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      border-color: #3b5a7a;
+      box-shadow: 0 0 0 3px rgba(59, 90, 122, 0.15);
+    }
+
+    textarea::placeholder {
+      color: #4a5b6b;
+    }
+
+    button {
+      background: #2d4a6e;
+      color: #e8f0ff;
+      border: none;
+      border-radius: 14px;
+      padding: 0 20px;
+      height: 52px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, opacity 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-shrink: 0;
+      letter-spacing: -0.2px;
+    }
+
+    button:hover:not(:disabled) {
+      background: #3a5f8a;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background: #141b22;
+      border: 1px solid #1e2a36;
+      color: #8a9eb2;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .chip:hover {
+      background: #1a222b;
+      border-color: #2d4a6e;
+      color: #c0d4e8;
+    }
+
+    .footer-note {
+      font-size: 0.6rem;
+      color: #3a4a5a;
+      text-align: center;
+      padding-bottom: 2px;
+    }
+
+    .footer-note a {
+      color: #5a7a9a;
+      text-decoration: none;
+    }
+
+    /* ——— Typing indicator ——— */
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 4px 0;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4a6a8a;
+      animation: blink 1.2s infinite ease-in-out;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    /* ——— Responsive ——— */
+    @media (max-width: 600px) {
+      body { padding: 0; }
+      .app {
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+      }
+      .msg { max-width: 95%; }
+      .header { padding: 14px 16px; }
+      .chat { padding: 16px; }
+      .input-area { padding: 12px 14px 14px; }
+      .chip { font-size: 0.65rem; padding: 5px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>🤖 Blaunch Portfolio Agent</h1>
+      <span class="badge">A2A v0.3.0</span>
+    </div>
+    <div class="header-right">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="status-text" id="statusText">checking…</span>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="chat" id="chat">
+    <!-- Initial agent message -->
+    <div class="msg agent">
+      <div class="avatar">🤖</div>
+      <div>
+        <div class="bubble">
+          Halo! Gue Blaunch Portfolio Agent — bisa analisis holding wallet di Arc (native USDC + token ERC-20) dan kasih saran alokasi lewat LLM.
+
+          Kirim alamat wallet (0x…) buat mulai, atau pakai format terstruktur:
+          <code style="display:block;margin-top:8px;padding:8px;background:#0b0f14;border-radius:8px;font-size:0.75rem;color:#8ab4f8;">{ "walletAddress": "0x…", "tokenAddresses": ["0x…"] }</code>
+        </div>
+        <div class="meta">
+          <span>via <code>message/send</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="quick-actions">
+      <button class="chip" data-fill='Analisis wallet 0x34C631C5AfB39B448b2e50378F6D2C42500175F6 di Arc'>📊 Contoh teks</button>
+      <button class="chip" data-fill='{"walletAddress":"0x34C631C5AfB39B448b2e50378F6D2C42500175F6","tokenAddresses":["0xa1923C331AE5f271Efc0583438B5423203380EEa"]}'>🧩 Contoh DataPart</button>
+      <button class="chip" data-fill='Review my portfolio'>💬 Tanpa alamat</button>
+    </div>
+    <div class="input-row">
+      <textarea id="input" rows="1" placeholder="Ketik pesan atau paste JSON DataPart… (Enter untuk kirim, Shift+Enter baris baru)"></textarea>
+      <button id="sendBtn" title="Kirim (Enter)">➤ Kirim</button>
+    </div>
+    <div class="footer-note">
+      Endpoint: <a href="#" id="endpointLink">http://localhost:4000/a2a</a> ·
+      <a href="#" id="cardLink">agent-card.json</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  // Konfigurasi — ganti BASE_URL kalau server jalan di host lain
+  // ═══════════════════════════════════════════════════════════════
+  const BASE_URL = 'http://localhost:4000';
+  const A2A_ENDPOINT = `${BASE_URL}/a2a`;
+
+  // DOM refs
+  const chatEl = document.getElementById('chat');
+  const inputEl = document.getElementById('input');
+  const sendBtn = document.getElementById('sendBtn');
+  const statusDot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  const endpointLink = document.getElementById('endpointLink');
+  const cardLink = document.getElementById('cardLink');
+
+  endpointLink.href = A2A_ENDPOINT;
+  endpointLink.textContent = A2A_ENDPOINT;
+  cardLink.href = `${BASE_URL}/.well-known/agent-card.json`;
+
+  // ── Auto-resize textarea ──
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
+  });
+
+  // ── Quick chips ──
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      inputEl.value = chip.dataset.fill;
+      inputEl.focus();
+      inputEl.dispatchEvent(new Event('input'));
+    });
+  });
+
+  // ── Health check ──
+  async function checkHealth() {
+    try {
+      const res = await fetch(`${BASE_URL}/health`);
+      const data = await res.json();
+      if (data.ok) {
+        statusDot.style.background = '#7ee787';
+        statusDot.style.boxShadow = '0 0 8px #7ee787';
+        statusText.textContent = `online · ${data.llm?.provider || 'llm'}`;
+      } else {
+        throw new Error('not ok');
+      }
+    } catch {
+      statusDot.style.background = '#f48787';
+      statusDot.style.boxShadow = '0 0 8px #f48787';
+      statusText.textContent = 'offline · cek server';
+    }
+  }
+
+  // ── Scroll ke bawah ──
+  function scrollBottom() {
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+
+  // ── Tambah bubble ──
+  function addMessage(role, text, meta = null, isError = false) {
+    const wrap = document.createElement('div');
+    wrap.className = `msg ${role}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = role === 'user' ? '👤' : '🤖';
+
+    const contentDiv = document.createElement('div');
+
+    const bubble = document.createElement('div');
+    bubble.className = `bubble${isError ? ' error' : ''}`;
+    bubble.textContent = text;
+    contentDiv.appendChild(bubble);
+
+    if (meta) {
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'meta';
+      metaDiv.innerHTML = meta;
+      contentDiv.appendChild(metaDiv);
+    }
+
+    wrap.appendChild(avatar);
+    wrap.appendChild(contentDiv);
+    chatEl.appendChild(wrap);
+    scrollBottom();
+    return wrap;
+  }
+
+  // ── Typing indicator ──
+  let typingEl = null;
+  function showTyping() {
+    if (typingEl) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'msg agent';
+    wrap.id = 'typingIndicator';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = '🤖';
+
+    const contentDiv = document.createElement('div');
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    bubble.appendChild(typing);
+    contentDiv.appendChild(bubble);
+
+    wrap.appendChild(avatar);
+    wrap.appendChild(contentDiv);
+    chatEl.appendChild(wrap);
+    typingEl = wrap;
+    scrollBottom();
+  }
+
+  function hideTyping() {
+    if (typingEl) {
+      typingEl.remove();
+      typingEl = null;
+    }
+  }
+
+  // ── Parse input jadi parts A2A ──
+  function buildParts(raw) {
+    const trimmed = raw.trim();
+    // Coba parse sebagai JSON DataPart dulu
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        // Kalau punya walletAddress, treat as DataPart
+        if (parsed.walletAddress) {
+          return [{
+            kind: 'data',
+            data: {
+              walletAddress: parsed.walletAddress,
+              tokenAddresses: parsed.tokenAddresses || []
+            }
+          }];
+        }
+      }
+    } catch {
+      // bukan JSON — lanjut ke text
+    }
+    return [{ kind: 'text', text: trimmed }];
+  }
+
+  // ── Kirim pesan ──
+  async function sendMessage() {
+    const raw = inputEl.value.trim();
+    if (!raw) return;
+
+    // Tampilkan pesan user
+    addMessage('user', raw);
+
+    // Reset input
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+
+    // Disable tombol
+    sendBtn.disabled = true;
+    sendBtn.textContent = '⏳';
+
+    showTyping();
+
+    const requestId = `req-${Date.now()}`;
+    const parts = buildParts(raw);
+
+    const payload = {
+      jsonrpc: '2.0',
+      id: requestId,
+      method: 'message/send',
+      params: {
+        message: {
+          role: 'user',
+          parts
+        }
+      }
+    };
+
+    try {
+      const res = await fetch(A2A_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      hideTyping();
+
+      // JSON-RPC error?
+      if (data.error) {
+        addMessage('agent', `⚠️ Error ${data.error.code}: ${data.error.message}`, null, true);
+        return;
+      }
+
+      const result = data.result;
+      if (!result) {
+        addMessage('agent', '⚠️ Respons kosong dari agent.', null, true);
+        return;
+      }
+
+      // Ekstrak teks dari parts
+      const textParts = (result.parts || []).filter(p => p.kind === 'text' || p.type === 'text');
+      const replyText = textParts.map(p => p.text).join('\n\n') || '(tidak ada teks)';
+
+      // Meta info
+      let metaHtml = '';
+      if (result.messageId) {
+        metaHtml += `<span>msg <code>${result.messageId.slice(0, 8)}…</code></span>`;
+      }
+      if (result.metadata?.llm) {
+        metaHtml += `<span>LLM <code>${result.metadata.llm.provider}/${result.metadata.llm.model}</code></span>`;
+      }
+      if (result.metadata?.portfolio) {
+        const p = result.metadata.portfolio;
+        const tokenCount = p.tokens?.length || 0;
+        metaHtml += `<span>saldo <code>${parseFloat(p.nativeUsdcBalance).toFixed(4)} USDC</code> · <code>${tokenCount} token</code></span>`;
+      }
+
+      addMessage('agent', replyText, metaHtml || null);
+
+    } catch (err) {
+      hideTyping();
+      addMessage('agent', `❌ Gagal konek ke agent: ${err.message}\n\nPastikan server jalan di ${BASE_URL}`, null, true);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = '➤ Kirim';
+      inputEl.focus();
+    }
+  }
+
+  // ── Event listeners ──
+  sendBtn.addEventListener('click', sendMessage);
+
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // ── Init ──
+  checkHealth();
+  setInterval(checkHealth, 30000);
+  inputEl.focus();
+</script>
+
+</body>
+</html>
