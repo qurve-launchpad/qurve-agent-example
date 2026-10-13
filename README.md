@@ -115,8 +115,8 @@ You can deploy this agent as-is, point a Qurve `launchAgent()` call at its endpo
 
 ```bash
 # 1. Clone
-git clone https://github.com/qurve-fun/portfolio-agent.git
-cd portfolio-agent
+git clone https://github.com/qurve-launchpad/qurve-agent-example.git
+cd qurve-agent-example
 
 # 2. Install
 npm install
