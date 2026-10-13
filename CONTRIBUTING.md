@@ -84,7 +84,7 @@ curl -s http://localhost:4000/.well-known/agent-card.json | jq
 
 - Explain **why**, not **what**
 - Non-obvious constants get a one-line "why this value" comment
-- Section dividers use `// ═══ TITLE ═══` (matching existing files)
+- Section dividers use `// === TITLE ===` (matching existing files)
 
 ### Error Handling
 
@@ -98,7 +98,7 @@ curl -s http://localhost:4000/.well-known/agent-card.json | jq
 
 ```
 src/
-├── index.ts       # Express server · A2A endpoint · rate limiter · sanitizer
+├── index.ts       # Express server, A2A endpoint, rate limiter, sanitizer
 ├── llm.ts         # LLM client abstraction (OpenAI-compatible surface)
 ├── prompts.ts     # System prompt + user message builder (few-shot ready)
 ├── portfolio.ts   # On-chain multi-chain reader (ethers v6)
@@ -113,7 +113,7 @@ src/
 - `chains.ts` — knows **which** chains and **which** default tokens; knows **nothing** about pricing
 - `prices.ts` — knows **how** to price; knows **nothing** about chains' business logic
 - `portfolio.ts` — knows **how** to read on-chain; does not compute USD
-- `enrich.ts` — combines raw + prices → USD-valued + risks; pure, deterministic
+- `enrich.ts` — combines raw + prices -> USD-valued + risks; pure, deterministic
 - `prompts.ts` — text only; never contains data-fetching logic
 - `llm.ts` — LLM client only; no prompt construction
 - `index.ts` — HTTP glue; delegates everything else
@@ -125,15 +125,14 @@ src/
 Before opening a PR, make sure:
 
 - [ ] `npm run build` passes with no errors
-- [ ] `npm run typecheck` passes with no errors
 - [ ] No new `any` types without an explaining comment
 - [ ] No hardcoded RPC URLs, API keys, or chain data outside `chains.ts`
-- [ ] If adding a chain → updated `chains.ts` **and** `prices.ts` CoinGecko map
-- [ ] If adding a skill → updated `AGENT_CARD.skills` **and** `KNOWN_CAPABILITIES` in `index.ts`
-- [ ] If changing output format → updated `README.md` "Output Format" section
-- [ ] If adding an env var → updated `.env.example` **and** `README.md` env table
+- [ ] If adding a chain -> updated `chains.ts` **and** `prices.ts` CoinGecko map
+- [ ] If adding a skill -> updated `AGENT_CARD.skills` **and** `KNOWN_CAPABILITIES` in `index.ts`
+- [ ] If changing output format -> updated `README.md` "Output Format" section
+- [ ] If adding an env var -> updated `.env.example` **and** `README.md` env table
 - [ ] Tested manually with at least one real wallet address
-- [ ] No new console.logs in happy path (use structured JSON logs like existing `a2a_success` / `a2a_error`)
+- [ ] No new `console.log` calls in the happy path (use structured JSON logs like existing `a2a_success` / `a2a_error`)
 
 ---
 
@@ -306,4 +305,4 @@ docs(readme): document QURVE_API_URL behavior
 ## License
 
 By contributing, you agree your contributions are licensed under the
-[MIT License](./LICENSE).
+[MIT License](./LICENSE.md).

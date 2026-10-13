@@ -23,10 +23,10 @@ how to report vulnerabilities and what protections exist by design.
 
 | Version | Supported |
 |---------|-----------|
-| 1.2.x   | ✅        |
-| 1.1.x   | ❌        |
-| 1.0.x   | ❌        |
-| < 1.0   | ❌        |
+| 1.2.x   | Yes       |
+| 1.1.x   | No        |
+| 1.0.x   | No        |
+| < 1.0   | No        |
 
 We support the latest minor release and one minor back. Only the latest
 release on `main` receives security patches.
@@ -131,12 +131,12 @@ The agent is intentionally built with a **minimal attack surface**:
 
 ```
 User request
-  → extractInput()    (validate wallet, chains, tokens)
-  → fetchWalletPortfolio()  (RPC reads only)
-  → enrichPortfolio() (pure computation, no side effects)
-  → chat()            (LLM call, data-only input)
-  → sanitizeOutput()  (ASCII-only, bounded length)
-  → JSON response
+  -> extractInput()          (validate wallet, chains, tokens)
+  -> fetchWalletPortfolio()  (RPC reads only)
+  -> enrichPortfolio()       (pure computation, no side effects)
+  -> chat()                  (LLM call, data-only input)
+  -> sanitizeOutput()        (ASCII-only, bounded length)
+  -> JSON response
 ```
 
 Nothing from the request touches the filesystem, spawns a process, or issues
@@ -203,6 +203,7 @@ https://your-domain.com/health
 ```
 
 Alert on:
+
 - Non-200 response
 - `ok: false`
 - Response time > 5s
@@ -215,6 +216,7 @@ misconfigured or abused endpoint can burn through quota fast.
 ### 7. Restrict outbound network access (optional, advanced)
 
 The agent needs to reach:
+
 - RPC providers (Arc, Base, BOT Chain, Robinhood)
 - `api.coingecko.com`
 - Your LLM provider

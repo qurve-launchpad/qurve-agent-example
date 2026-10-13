@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.2.0] — 2026-02-14
+## [1.2.0] - 2026-02-14
 
 ### Added
 
@@ -51,8 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Map cleaned up every 5 minutes to avoid memory growth
 
 - **ASCII sanitizer** for LLM output
-  - Strips Unicode em-dashes, curly quotes, non-breaking spaces, bullets,
-    arrows, math symbols
+  - Strips Unicode em-dashes, curly quotes, non-breaking spaces, bullets, arrows, math symbols
   - Ensures consistent rendering across terminals and log viewers
 
 - **Pre-computed risk flags** in `src/enrich.ts`
@@ -74,30 +73,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Dockerfile` — multi-stage build, non-root user, health check
   - `docker-compose.yml` — env-driven, health check, restart policy
   - `.dockerignore` — excludes dev files from image
+  - `.railwayignore` — reduces Railway upload size
   - `.github/workflows/ci.yml` — Node 20 build + Docker dry-run
 
 - **Documentation**
   - `README.md` — comprehensive, English, GitHub-friendly
+  - `AGENT_ACTIVATION_GUIDE.md` — step-by-step setup walkthrough
   - `CONTRIBUTING.md` — dev setup, code style, PR checklist
   - `SECURITY.md` — disclosure policy, threat model, best practices
   - `CHANGELOG.md` — this file
-  - `LICENSE` — MIT
+  - `LICENSE.md` — MIT
 
 - **Project config**
-  - `tsconfig.json` — strict mode, ES2022, NodeNext resolution
+  - `tsconfig.json` — strict mode, ES2022, CommonJS output
   - `.env.example` — full template with all env vars documented
 
 ### Changed
 
 - **Rebranded** from "Blaunch Portfolio Agent" to "**xQurve Agent**"
-  - Package name: `blaunch-portfolio-agent` → `@qurve/portfolio-agent`
+  - Package name: `blaunch-portfolio-agent` -> `@qurve/portfolio-agent`
   - Agent card name: `xQurve Agent`
   - All references to "Blaunch" replaced with "Qurve"
 
 - **Agent card version** bumped to `1.2.0`
 - **Protocol version** declared as `0.3.0`
-- **LLM default model** — `openai/gpt-oss-20b` (Groq free tier)
-  - Chosen over `llama-3.3-70b-versatile` for stability and reasoning quality
+- **LLM default model** — `openai/gpt-oss-120b` (Groq free tier)
+  - Chosen for deeper reasoning and stability
   - Overridable via `LLM_MODEL` env var
 - **Provider-agnostic LLM** — `llm.ts` now uses OpenAI-compatible surface
   - Swap provider by setting `LLM_BASE_URL`
@@ -106,20 +107,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - **Hardcoded Arc-only logic** — now fully chain-agnostic
-- **`tokenAddresses` flat array** support (legacy) — still parsed but
-  documented as deprecated; use `tokensByChain` instead
+- **`tokenAddresses` flat array** support (legacy) — still parsed but documented as deprecated; use `tokensByChain` instead
 - **Legacy env vars** from Blaunch era — no longer recognized
 
 ### Fixed
 
 - **Provider cache no longer spams** "JsonRpcProvider failed to detect network"
   - Uses `staticNetwork` + `batchMaxCount: 1` in ethers v6
-- **Empty completion handling** — `llm.ts` throws a clear error instead of
-  returning `undefined`
-- **Chain read errors no longer crash** the whole request — per-chain
-  try/catch; errored chains surface in `risks` array
-- **Unicode mojibake** — sanitizer ensures all output renders identically
-  across Windows terminals, log aggregators, and web UIs
+- **Empty completion handling** — `llm.ts` throws a clear error instead of returning `undefined`
+- **Chain read errors no longer crash** the whole request — per-chain try/catch; errored chains surface in `risks` array
+- **Unicode mojibake** — sanitizer ensures all output renders identically across Windows terminals, log aggregators, and web UIs
 
 ### Security
 
@@ -129,7 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.0] — 2026-01-08
+## [0.1.0] - 2026-01-08
 
 ### Added
 

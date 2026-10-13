@@ -2,11 +2,12 @@
 
 > A2A-compliant portfolio analyst agent for the **Qurve** trustless agent launchpad. Reads any wallet's multi-chain portfolio, enriches with live USD values, and returns a structured risk assessment powered by a cheap/free LLM.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.md)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![A2A](https://img.shields.io/badge/A2A-v0.3.0-blue)](https://github.com/google-a2a/A2A)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
-[![CI](https://github.com/qurve-launchpad/qurve-agent-example/actions/workflows/ci.yml/badge.svg)](https://github.com/qurve-launchpad/qurve-agent-example/actions/workflows/ci.yml)
+
+> **New here?** See the [Agent Activation Guide](./AGENT_ACTIVATION_GUIDE.md) for a step-by-step setup walkthrough — from cloning to production deployment.
 
 ---
 
@@ -19,6 +20,7 @@
 - [Environment Variables](#environment-variables)
 - [API Reference](#api-reference)
 - [Skills](#skills)
+- [Capabilities & Pricing](#capabilities--pricing)
 - [Output Format](#output-format)
 - [Deployment](#deployment)
 - [Testing](#testing)
@@ -56,7 +58,7 @@ You can deploy this agent as-is, point a Qurve `launchAgent()` call at its endpo
 - **Agent token auto-discovery** — scans all Qurve agent tokens on each chain and reports which ones the wallet holds
 - **USD-valued output** — enriches every holding with a USD price (native + ERC-20) from CoinGecko with caching
 - **Risk assessment** — pre-computes concentration, stablecoin-buffer, cross-chain fragmentation, and dust risks
-- **Provider-agnostic LLM** — defaults to Groq (`openai/gpt-oss-20b`, free tier), swap to OpenAI / Together / Fireworks / any OpenAI-compatible endpoint via `.env`
+- **Provider-agnostic LLM** — defaults to Groq (`openai/gpt-oss-120b`, free tier), swap to OpenAI / Together / Fireworks / any OpenAI-compatible endpoint via `.env`
 - **Terminal-clean output** — ASCII-only sanitizer strips Unicode quotes, dashes, bullets so results render cleanly in monospace UIs
 - **Rate-limited** — in-memory per-IP limit (30 req/min default) to survive casual abuse
 - **Zero lock-in** — plain Express + ethers + fetch, deployable anywhere
@@ -95,7 +97,7 @@ You can deploy this agent as-is, point a Qurve `launchAgent()` call at its endpo
 │                    └──────┬───────┘                         │
 │                           │                                 │
 │                           ▼                                 │
-│                    sanitizeOutput()  →  ASCII-clean text    │
+│                    sanitizeOutput()  ->  ASCII-clean text   │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -154,7 +156,7 @@ npm start
 | `PUBLIC_URL` | `http://localhost:4000` | Public base URL (used in agent card) |
 | `LLM_PROVIDER` | `groq` | Label only — for `llmInfo` reporting |
 | `LLM_API_KEY` | — | **Required.** Groq key or OpenAI-compatible key |
-| `LLM_MODEL` | `openai/gpt-oss-20b` | Model identifier |
+| `LLM_MODEL` | `openai/gpt-oss-120b` | Model identifier |
 | `LLM_BASE_URL` | — | Override for OpenAI-compatible endpoints |
 | `LLM_TEMPERATURE` | `0.3` | Sampling temperature |
 | `LLM_MAX_TOKENS` | `1500` | Max output tokens |
@@ -268,7 +270,7 @@ curl -X POST https://your-domain.com/a2a \
     "parts": [{ "kind": "text", "text": "..." }],
     "metadata": {
       "enriched": {},
-      "llm": { "provider": "groq", "model": "openai/gpt-oss-20b" },
+      "llm": { "provider": "groq", "model": "openai/gpt-oss-120b" },
       "durationMs": 3421,
       "capability": "portfolio-analysis"
     }
@@ -283,7 +285,7 @@ Returns agent status, LLM info, chain count, rate-limit config, and uptime.
 ```json
 {
   "ok": true,
-  "llm": { "provider": "groq", "model": "openai/gpt-oss-20b", "temperature": 0.3 },
+  "llm": { "provider": "groq", "model": "openai/gpt-oss-120b", "temperature": 0.3 },
   "chains": 5,
   "rateLimit": { "windowMs": 60000, "max": 30 },
   "uptimeSeconds": 3600
@@ -324,8 +326,6 @@ This agent runs as a **Qurve-launched agent**, which means it has two distinct l
 
 **Important:** the capability names you register on Qurve must **match the skill IDs** in `AGENT_CARD.skills` (or be custom names the Qurve backend also knows) so the pricing lookup succeeds.
 
----
-
 ### Setting prices at launch
 
 When launching on Qurve, you call the Qurve backend's `POST /api/agents/prepare-launch` with a `capabilities` array:
@@ -348,7 +348,7 @@ When launching on Qurve, you call the Qurve backend's `POST /api/agents/prepare-
 }
 ```
 
-Each entry maps a **capability name** → **USDC base price**. Prices are per-call, expressed in USDC (6 decimals internally).
+Each entry maps a **capability name** to a **USDC base price**. Prices are per-call, expressed in USDC (6 decimals internally).
 
 **Choose prices based on:**
 
@@ -358,8 +358,6 @@ Each entry maps a **capability name** → **USDC base price**. Prices are per-ca
 
 Capabilities with **no entry** in the array are treated as **free** by the Qurve backend.
 
----
-
 ### How a caller pays
 
 Here is the full end-to-end payment flow when a Qurve user hires this agent:
@@ -367,7 +365,7 @@ Here is the full end-to-end payment flow when a Qurve user hires this agent:
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │  1. QUOTE                                                        │
-│     User → Qurve FE → POST /api/a2a/quote                        │
+│     User -> Qurve FE -> POST /api/a2a/quote                      │
 │     { chainId, agentId, capability, paymentMethod }              │
 │                                                                  │
 │     Qurve backend reads agent metadata + live token price,       │
@@ -379,16 +377,16 @@ Here is the full end-to-end payment flow when a Qurve user hires this agent:
 │  2. PAYMENT (user chooses one)                                   │
 │                                                                  │
 │  Token flow:                  x402 flow:                         │
-│  ─ Transfer agent tokens      ─ Sign EIP-712 authorization       │
-│    user → creator                (Circle Gateway batched)        │
-│  ─ 0% platform fee            ─ 5% platform fee, 95% creator     │
-│  ─ Immediate settlement       ─ 5-minute grace period            │
+│  - Transfer agent tokens      - Sign EIP-712 authorization       │
+│    user -> creator              (Circle Gateway batched)         │
+│  - 0% platform fee            - 5% platform fee, 95% creator     │
+│  - Immediate settlement       - 5-minute grace period            │
 └──────────────────────────────────────────────────────────────────┘
                              │
                              ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │  3. EXECUTE                                                      │
-│     User → Qurve FE → POST /api/a2a/use                          │
+│     User -> Qurve FE -> POST /api/a2a/use                        │
 │     { paymentProof OR x402Payload, request, capability, ... }    │
 │                                                                  │
 │     Qurve backend verifies payment, then calls THIS agent:       │
@@ -398,7 +396,7 @@ Here is the full end-to-end payment flow when a Qurve user hires this agent:
                              ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │  4. RESPOND                                                      │
-│     Agent → Qurve backend → user                                 │
+│     Agent -> Qurve backend -> user                               │
 │     { output, metadata: { enriched, llm, durationMs, ... } }     │
 └──────────────────────────────────────────────────────────────────┘
                              │
@@ -414,18 +412,14 @@ Here is the full end-to-end payment flow when a Qurve user hires this agent:
 
 **Key point:** this agent server **does not handle payment itself**. It only receives the A2A JSON-RPC request *after* Qurve has verified that the caller paid. All payment, verification, and settlement logic lives in the Qurve backend.
 
----
-
 ### Fee summary
 
 | Payment method | Platform fee | Creator receives | Settlement timing |
 |---|---|---|---|
-| Agent token (ERC-20) | **0%** | **100%** | Immediate — on-chain transfer, user → creator |
+| Agent token (ERC-20) | **0%** | **100%** | Immediate — on-chain transfer, user -> creator |
 | x402 (USDC via Circle Gateway) | **5%** | **95%** | After 5-minute grace period (dispute window) |
 
 The 5% x402 fee covers facilitator costs and platform operations. The 0% token fee is a deliberate incentive: creators earn more when paid in their own token, and users save on gas compared to x402 flows.
-
----
 
 ### Example: price conversion for a $0.10 capability
 
@@ -433,8 +427,8 @@ Suppose your agent token trades at **$0.0005 per token** and you set the capabil
 
 | Field | Value | Calculation |
 |---|---|---|
-| `usdcPrice` | `100000` | 0.10 USDC × 1e6 (USDC 6 dec) |
-| `costTokens` | `200000000000000000000` | (0.10 / 0.0005) × 1e18 = 200 tokens |
+| `usdcPrice` | `100000` | 0.10 USDC x 1e6 (USDC 6 dec) |
+| `costTokens` | `200000000000000000000` | (0.10 / 0.0005) x 1e18 = 200 tokens |
 | Human-readable | **200 tokens** | What the caller transfers to the creator |
 
 The Qurve backend recomputes this **at quote time** using the live token price from:
@@ -443,8 +437,6 @@ The Qurve backend recomputes this **at quote time** using the live token price f
 - The Uniswap V3 pool (post-graduation)
 
 A quote expires after **60 seconds** (`CONSTANTS.A2A_QUOTE_EXPIRY_MS`) — the caller must pay before then or the price may drift.
-
----
 
 ### Example: pricing tiers for this agent
 
@@ -460,8 +452,6 @@ A reasonable default pricing tier for the xQurve portfolio agent:
 
 Set prices that reflect your operational costs and the value delivered. Undercharging makes it hard to sustain; overcharging drives callers to cheaper agents.
 
----
-
 ### Immutability of prices
 
 Once an agent is launched, **capability prices are immutable**. They are baked into the agent metadata (IPFS hash) and registered on-chain at launch time.
@@ -469,8 +459,6 @@ Once an agent is launched, **capability prices are immutable**. They are baked i
 To change prices, you must **launch a new agent**. This is intentional — it protects callers from bait-and-switch pricing after they've committed to using an agent, and it keeps the agent's economics transparent and predictable for its entire lifetime.
 
 If you're experimenting with pricing, launch multiple agents at different price points and let the market choose.
-
----
 
 ### Registering the endpoint with Qurve
 
@@ -483,6 +471,8 @@ POST https://your-domain.com/a2a
 Qurve's verifier will call `GET https://your-domain.com/.well-known/agent-card.json` to confirm the endpoint is live before granting the "verified" badge. Once verified, the agent appears on the Qurve launchpad and can be hired via token or x402 payment.
 
 See the [Deployment](#deployment) section for setup details.
+
+---
 
 ## Output Format
 
@@ -544,7 +534,7 @@ See [`docker-compose.yml`](./docker-compose.yml).
 
 After deployment, pass the endpoint to Qurve's factory:
 
-1. Deploy the agent → note its public HTTPS URL
+1. Deploy the agent — note its public HTTPS URL
 2. Launch a Qurve agent with `endpoint_ = https://your-domain.com/a2a`
 3. Qurve verifier will `GET /.well-known/agent-card.json` to confirm the agent is live
 4. Once verified, the agent gets the "verified" badge on the Qurve launchpad
@@ -583,6 +573,9 @@ curl -X POST http://localhost:4000/a2a \
 
 ```
 .
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── src/
 │   ├── index.ts         # Express server + A2A endpoint + rate limit
 │   ├── llm.ts           # LLM client abstraction (Groq + OpenAI-compatible)
@@ -592,18 +585,20 @@ curl -X POST http://localhost:4000/a2a \
 │   ├── prices.ts        # CoinGecko price fetcher with in-memory cache
 │   ├── chains.ts        # Chain registry + default tokens from env
 │   └── qurve.ts         # Qurve API client for agent token discovery
+├── .dockerignore
 ├── .env.example
 ├── .gitignore
-├── .dockerignore
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-├── tsconfig.json
-├── README.md
-├── LICENSE
+├── .railwayignore
+├── AGENT_ACTIVATION_GUIDE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
-└── SECURITY.md
+├── docker-compose.yml
+├── Dockerfile
+├── LICENSE.md
+├── package.json
+├── README.md
+├── SECURITY.md
+└── tsconfig.json
 ```
 
 ---
@@ -612,11 +607,11 @@ curl -X POST http://localhost:4000/a2a \
 
 | Chain | ID | Native | CoinGecko ID | Token Pricing |
 |---|---|---|---|---|
-| Arc Testnet | 5042002 | USDC (18 dec) | — (stablecoin = $1) | ❌ |
-| Base | 8453 | ETH | `ethereum` | ✅ |
-| Base Sepolia | 84532 | ETH | `ethereum` | ✅ (Base lookup) |
-| Robinhood Chain | 4663 | ETH | `ethereum` | ❌ |
-| BOT Chain | 677 | BOT | `wrapped-bot` | ❌ |
+| Arc Testnet | 5042002 | USDC (18 dec) | — (stablecoin = $1) | No |
+| Base | 8453 | ETH | `ethereum` | Yes |
+| Base Sepolia | 84532 | ETH | `ethereum` | Yes (Base lookup) |
+| Robinhood Chain | 4663 | ETH | `ethereum` | No |
+| BOT Chain | 677 | BOT | `wrapped-bot` | No |
 
 > **Note:** Native Arc USDC uses **18 decimals** at the protocol level (native gas), distinct from the ERC-20 USDC precompile which uses **6 decimals**.
 
@@ -628,7 +623,7 @@ curl -X POST http://localhost:4000/a2a \
 
 Free tier with fast inference and a clean OpenAI-compatible API. The `llm.ts` abstraction makes swapping providers a one-line `.env` change — no code edits.
 
-### Why no token auto-discovery (holdings enumeration)?
+### Why no full token auto-discovery (holdings enumeration)?
 
 Full enumeration of a wallet's ERC-20 holdings requires either:
 
@@ -690,7 +685,7 @@ See [`SECURITY.md`](./SECURITY.md) for reporting vulnerabilities.
 
 ## License
 
-[MIT](./LICENSE) © Qurve
+[MIT](./LICENSE.md) © Qurve
 
 ---
 

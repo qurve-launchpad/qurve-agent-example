@@ -63,19 +63,19 @@ Best for: testing, developing, or verifying the agent works before deploying.
 
 ```bash
 git clone https://github.com/qurve-launchpad/qurve-agent-example.git
-cd portfolio-agent
+cd qurve-agent-example
 ```
 
 If you forked the repo, use your fork's URL instead.
 
 ### Step 2: Get a Free Groq API Key
 
-Groq provides free LLM inference — no credit card required, and the free tier gives you 30 requests per minute (enough for development and light production use)[reference:0].
+Groq provides free LLM inference — no credit card required. The free tier gives you 30 requests per minute, enough for development and light production use.
 
 **Steps:**
 
 1. Go to [console.groq.com/keys](https://console.groq.com/keys)
-2. Sign up with your **Google** or **GitHub** account — no credit card needed[reference:1]
+2. Sign up with your **Google** or **GitHub** account — no credit card needed
 3. Once logged in, click **"Create API Key"**
 4. Give it a name (e.g. `xqurve-agent-local`)
 5. **Copy the key immediately** — it starts with `gsk_` and is only shown once
@@ -94,10 +94,10 @@ cp .env.example .env
 Open `.env` in your editor and set at minimum:
 
 ```bash
-# Required — paste your Groq key from Step 2
+# Required - paste your Groq key from Step 2
 LLM_API_KEY=gsk_your_actual_key_here
 
-# Required — the Qurve backend your agent will talk to
+# Required - the Qurve backend your agent will talk to
 QURVE_API_URL=https://qurve.online
 
 # Fine for local dev
@@ -202,21 +202,21 @@ If you got a real analysis — **Path A is done.** You can now [register the age
 
 ## Path B — Deploy to Railway (10 minutes)
 
-Best for: production deployment. Railway auto-detects Node.js projects, installs dependencies, and starts the app automatically[reference:2].
+Best for: production deployment. Railway auto-detects Node.js projects, installs dependencies, and starts the app automatically.
 
 ### Step 1: Push to Your GitHub
 
 If you cloned the original repo (not a fork), create your own GitHub repository first:
 
 1. Go to [github.com/new](https://github.com/new)
-2. Name it `portfolio-agent` (or any name you like)
+2. Name it `qurve-agent-example` (or any name you like)
 3. **Do not** initialize with README or .gitignore (we already have them)
 4. Click **"Create repository"**
 5. Back in your terminal, point the remote to your new repo:
 
 ```bash
-cd portfolio-agent
-git remote set-url origin https://github.com/YOUR_USERNAME/portfolio-agent.git
+cd qurve-agent-example
+git remote set-url origin https://github.com/YOUR_USERNAME/qurve-agent-example.git
 git push -u origin main
 ```
 
@@ -225,7 +225,7 @@ git push -u origin main
 ```bash
 git check-ignore -v .env
 # Should output something like: .gitignore:XX:.env
-# If nothing is output, .env is NOT ignored — fix .gitignore first
+# If nothing is output, .env is NOT ignored - fix .gitignore first
 ```
 
 If you accidentally committed `.env`, remove it and rotate the key:
@@ -239,21 +239,21 @@ git push
 
 ### Step 2: Create a Railway Account
 
-Go to [railway.app](https://railway.app) and sign up with your GitHub account. Railway's free tier gives you $5 of credit per month — enough to run this agent continuously for testing[reference:3].
+Go to [railway.app](https://railway.app) and sign up with your GitHub account. Railway's free tier gives you $5 of credit per month, enough to run this agent continuously for testing.
 
 ### Step 3: Deploy from GitHub
 
 1. Go to the [Railway Dashboard](https://railway.com/dashboard)
-2. Click **+ New** → **GitHub repo**[reference:4]
+2. Click **+ New** -> **GitHub repo**
 3. Authorize Railway to access your GitHub repositories
-4. Select your `portfolio-agent` repo
+4. Select your `qurve-agent-example` repo
 5. Railway will auto-detect the Node.js project and start building
 
 The first build takes about 2-3 minutes. Watch the **Deploy Logs** tab for progress. When done, you'll see your service running but **without a public URL yet** — that comes next.
 
 ### Step 4: Set Environment Variables
 
-Railway does **not** read your `.env` file from the repo (that would defeat the purpose of gitignoring it). You must set every variable in the Railway dashboard[reference:5].
+Railway does **not** read your `.env` file from the repo (that would defeat the purpose of gitignoring it). You must set every variable in the Railway dashboard.
 
 1. Click your service in the Railway project canvas
 2. Go to the **Variables** tab
@@ -261,12 +261,12 @@ Railway does **not** read your `.env` file from the repo (that would defeat the 
 
 | Variable | Value | Required? |
 |---|---|---|
-| `LLM_API_KEY` | Your `gsk_...` key from Step 2 | ✅ **Yes** |
-| `LLM_PROVIDER` | `groq` | ✅ Yes |
-| `LLM_MODEL` | `openai/gpt-oss-120b` | ✅ Yes |
-| `QURVE_API_URL` | `https://qurve.online` | ✅ Yes |
-| `PUBLIC_URL` | *(leave empty — set in Step 5)* | ⏳ Later |
-| `PORT` | *(leave empty — Railway injects this automatically)* | ❌ No |
+| `LLM_API_KEY` | Your `gsk_...` key from Step 2 | **Yes** |
+| `LLM_PROVIDER` | `groq` | Yes |
+| `LLM_MODEL` | `openai/gpt-oss-120b` | Yes |
+| `QURVE_API_URL` | `https://qurve.online` | Yes |
+| `PUBLIC_URL` | *(leave empty - set in Step 5)* | Later |
+| `PORT` | *(leave empty - Railway injects this automatically)* | No |
 | `LLM_TEMPERATURE` | `0.3` | Optional |
 | `LLM_MAX_TOKENS` | `1500` | Optional |
 | `PORTFOLIO_CHAINS` | `677,8453,4663,5042002` | Optional |
@@ -288,14 +288,14 @@ Railway does **not** read your `.env` file from the repo (that would defeat the 
 
 After adding variables, Railway will automatically redeploy.
 
-> **Important:** Railway injects `PORT` into `process.env` automatically. Never set it manually unless you have a specific reason — the agent reads `process.env.PORT` and binds to it[reference:6].
+> **Important:** Railway injects `PORT` into `process.env` automatically. Never set it manually unless you have a specific reason — the agent reads `process.env.PORT` and binds to it.
 
 ### Step 5: Generate a Public URL
 
 1. Click your service in the Railway canvas
 2. Go to the **Settings** tab
-3. Under **Networking**, click **Generate Domain**[reference:7]
-4. Railway gives you a URL like `https://portfolio-agent-production-xxxx.up.railway.app`
+3. Under **Networking**, click **Generate Domain**
+4. Railway gives you a URL like `https://qurve-agent-example-production-xxxx.up.railway.app`
 5. **Copy this URL** — you need it for `PUBLIC_URL`
 
 Now go back to the **Variables** tab and set:
@@ -367,7 +367,7 @@ Once launched, Qurve's verifier will:
 
 1. `GET https://your-domain.up.railway.app/.well-known/agent-card.json`
 2. Validate the response shape (must have `name`, `capabilities`, `skills`)
-3. If valid → mark the agent as **verified**
+3. If valid -> mark the agent as **verified**
 
 ### 3. Configure Capabilities and Pricing
 
@@ -442,9 +442,9 @@ Format: `DEFAULT_TOKENS_<chainId>=0xaddr1,0xaddr2,...`
 
 ## Troubleshooting
 
-### `LLM_API_KEY (atau GROQ_API_KEY) belum di-set`
+### `LLM_API_KEY (or GROQ_API_KEY) is not set`
 
-The agent can't find your LLM key. Check:
+The agent cannot find your LLM key. Check:
 
 - `.env` exists in the project root (not inside `src/`)
 - `LLM_API_KEY` is spelled correctly
@@ -460,7 +460,7 @@ Something is failing. Check the logs:
 
 # Railway
 railway logs
-# Or: Railway dashboard → Deploy Logs tab
+# Or: Railway dashboard -> Deploy Logs tab
 ```
 
 Common causes:
@@ -522,8 +522,8 @@ Your app might be binding to the wrong port. **Never hardcode the port** — alw
 ## Next Steps
 
 - **Customize the LLM prompt** — edit `src/prompts.ts` to change the analysis tone or add sections
-- **Add a new chain** — see `CONTRIBUTING.md` → "Adding a New Chain"
-- **Add a new skill** — see `CONTRIBUTING.md` → "Adding a New Skill"
+- **Add a new chain** — see `CONTRIBUTING.md` -> "Adding a New Chain"
+- **Add a new skill** — see `CONTRIBUTING.md` -> "Adding a New Skill"
 - **Set up monitoring** — point UptimeRobot at `https://your-domain/health`
 - **Watch your earnings** — Qurve dashboard shows hires and payouts per capability
 
