@@ -296,5 +296,5 @@ anonymous). Thank you for helping keep the Qurve ecosystem safe.
 ## Contact
 
 - **Security reports:** security@qurve.fun
-- **General issues:** https://github.com/qurve-fun/portfolio-agent/issues
+- **General issues:** https://github.com/qurve-launchpad/qurve-agent-example/issues
 - **Qurve:** https://qurve.fun

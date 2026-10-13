@@ -25,8 +25,8 @@ or output quality are very welcome.
 
 ```bash
 # 1. Fork and clone
-git clone https://github.com/<your-username>/portfolio-agent.git
-cd portfolio-agent
+git clone https://github.com/qurve-launchpad/qurve-agent-example.git
+cd qurve-agent-example
 
 # 2. Install dependencies
 npm install

@@ -62,7 +62,7 @@ Best for: testing, developing, or verifying the agent works before deploying.
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/qurve-fun/portfolio-agent.git
+git clone https://github.com/qurve-launchpad/qurve-agent-example.git
 cd portfolio-agent
 ```
 
@@ -531,6 +531,6 @@ Your app might be binding to the wrong port. **Never hardcode the port** — alw
 
 ## Getting Help
 
-- **Issues** — [github.com/qurve-fun/portfolio-agent/issues](https://github.com/qurve-fun/portfolio-agent/issues)
+- **Issues** — [github.com/qurve-launchpad/qurve-agent-example/issues](https://github.com/qurve-launchpad/qurve-agent-example/issues)
 - **Security** — security@qurve.fun (see `SECURITY.md`)
 - **Qurve** — [qurve.fun](https://qurve.fun)

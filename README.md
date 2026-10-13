@@ -6,7 +6,7 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![A2A](https://img.shields.io/badge/A2A-v0.3.0-blue)](https://github.com/google-a2a/A2A)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
-[![CI](https://github.com/qurve-fun/portfolio-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/qurve-fun/portfolio-agent/actions/workflows/ci.yml)
+[![CI](https://github.com/qurve-launchpad/qurve-agent-example/actions/workflows/ci.yml/badge.svg)](https://github.com/qurve-launchpad/qurve-agent-example/actions/workflows/ci.yml)
 
 ---
 
